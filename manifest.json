@@ -1,0 +1,31 @@
+{
+	"manifest_version": 2,
+	"name": "NovelAI Prompt Analyzer",
+"browser_specific_settings": {
+  "gecko": {
+    "id": "novelAI@ser.com"
+  }
+},
+	"version": "1.0",
+	"description": "Analyzes the content of textboxes for errors.",
+	"permissions": [
+		"activeTab"
+	],
+	"content_scripts": [
+		{
+			"matches": ["https://novelai.net/image*"],
+			"js": ["content.js"]
+		}
+	],
+	"browser_action": {
+		"default_popup": "popup.html",
+		"default_icon": {
+			"48": "icons/icon-48.png",
+			"96": "icons/icon-96.png"
+		}
+	},
+	"icons": {
+		"48": "icons/icon-48.png",
+		"96": "icons/icon-96.png"
+	}
+}
