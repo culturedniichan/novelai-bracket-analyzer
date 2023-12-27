@@ -13,7 +13,7 @@
 	],
 	"content_scripts": [
 		{
-			"matches": ["https://novelai.net/image*"],
+			"matches": ["https://novelai.net/*"],
 			"js": ["content.js"]
 		}
 	],

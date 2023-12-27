@@ -36,43 +36,63 @@ function findButton() {
     return document.querySelector('button');
 }
 
+
 function init() {
     console.log('Inside Novel AI extension init function');
-    
-    // Create a MutationObserver to observe the DOM for changes
-    var observer = new MutationObserver(function(mutationsList, observer) {
-        for (var mutation of mutationsList) {
-            if (mutation.type === 'childList') {
-                var promptDiv = findPromptDiv();
-                if (promptDiv) {
-                    console.log("Found prompt div:", promptDiv);
 
-                    var textAreas = document.querySelectorAll('textarea');
-                    console.log('Text areas:', textAreas.length);
-                    
+    var isProcessing = false; // Semaphore flag
+    var debounceTimer;
+    function modifyDOM() {
+
+        if (isProcessing) {
+            // Exit if another invocation is in progress
+            return;
+        }
+
+        isProcessing = true; // Set the fla
+
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            console.log("Inside modify DOM");
+            var promptDiv = findPromptDiv();
+            if (promptDiv) {
+                console.log("Found prompt div:", promptDiv);
+
+                var textAreas = document.querySelectorAll('textarea');
+                console.log('Text areas:', textAreas.length);
+
+                if (textAreas.length > 0) {
                     textAreas.forEach(textArea => {
-                        textArea.addEventListener('input', function() {
+                        textArea.addEventListener('input', function () {
                             if (validateText(this.value)) {
                                 promptDiv.style.color = ''; // Reset to default color
                             } else {
                                 promptDiv.style.color = 'red'; // Change color to red
                             }
                         });
-				   });
-					
-			
+                    });
 
-                    // Optional: disconnect the observer if you don't need it anymore
+                    // If textareas are found, disconnect the observer
                     observer.disconnect();
-                    return;
                 }
-        }
+            }
+
+            isProcessing = false; // Reset the flag
+        }, 1000); // Adjust the debounce time as needed
     }
+
+    var observer = new MutationObserver(function (mutationsList, observer) {
+        for (let mutation of mutationsList) {
+            if (mutation.type === 'childList') {
+                modifyDOM();
+                // Optionally, you can add additional checks here before calling modifyDOM()
+            }
+        }
     });
 
-    // Start observing the document body for added nodes
     observer.observe(document.body, { childList: true, subtree: true });
 }
+
 
 
 // Call init on window load
