@@ -96,4 +96,4 @@ function init() {
 
 
 // Call init on window load
-window.onload = init;
+init();
